@@ -18,28 +18,26 @@ function Checkout() {
 
   useEffect(() => {
     // Fetch the stored cart and discount
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const storedDiscount = JSON.parse(localStorage.getItem("discount")) || 0;
-
-    console.log("Stored cart:", storedCart); // Debugging line
-    console.log("Stored discount:", storedDiscount); // Debugging line
+    const storedCart = localStorage.getItem("cart");
+    const parsedCart = storedCart ? JSON.parse(storedCart) : [];
+    const storedDiscount = localStorage.getItem("discount");
+    const parsedDiscount = storedDiscount ? JSON.parse(storedDiscount) : 0;
 
     // Calculate subtotal
-    const calculatedSubtotal = storedCart.reduce((acc, item) => {
-      const price = parseFloat(item.variants.edges[0].node.price.amount) || 0;
-      const quantity = parseInt(item.quantity, 10) || 0;
+    const calculatedSubtotal = parsedCart.reduce((acc, item) => {
+      const price =
+        parseFloat(item.variants.edges[0]?.node?.price?.amount) || 0;
+      const quantity = parseInt(item.quantity, 10) || 1; // Default quantity to 1 if not set
       return acc + price * quantity;
     }, 0);
 
-    console.log("Calculated subtotal:", calculatedSubtotal); // Debugging line
-
     // Calculate grand total
-    const discountAmount = calculatedSubtotal * (storedDiscount / 100) || 0;
+    const discountAmount = calculatedSubtotal * (parsedDiscount / 100);
     const calculatedGrandTotal = calculatedSubtotal - discountAmount;
 
-    setCart(storedCart);
+    setCart(parsedCart);
     setSubtotal(calculatedSubtotal);
-    setDiscount(storedDiscount);
+    setDiscount(parsedDiscount);
     setGrandTotal(calculatedGrandTotal);
   }, []);
 
@@ -149,8 +147,9 @@ function Checkout() {
                   $
                   {(
                     (parseFloat(item.variants.edges[0].node.price.amount) ||
-                      0) * (parseInt(item.quantity, 10) || 0)
-                  ).toFixed(2)}
+                      0) * (parseInt(item.quantity, 10) || 1)
+                  ) // Default quantity to 1 if not set
+                    .toFixed(2)}
                 </p>
               </div>
             ))}
@@ -161,7 +160,7 @@ function Checkout() {
             </div>
             <div className="flex justify-between">
               <p>Discount</p>
-              <p>- ${(subtotal * (discount / 100) || 0).toFixed(2)}</p>
+              <p>- ${(subtotal * (discount / 100)).toFixed(2)}</p>
             </div>
             <div className="flex justify-between mt-4">
               <p>Grand total</p>
@@ -169,7 +168,7 @@ function Checkout() {
             </div>
           </div>
           {formValid ? (
-            <Link href="/components/payment">
+            <Link href="/components/Payments">
               <button className="bg-black text-white px-6 py-3 mt-6 rounded-lg w-full">
                 Continue to payment
               </button>
