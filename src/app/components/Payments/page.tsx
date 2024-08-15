@@ -17,7 +17,7 @@ function Payment() {
   const [shippingCost] = useState(22.5);
   const [grandTotal] = useState(subtotal + shippingCost);
 
-  const handlePaymentMethodChange = (method) => {
+  const handlePaymentMethodChange = (method: React.SetStateAction<string>) => {
     setPaymentMethod(method);
   };
 
