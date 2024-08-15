@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 function Checkout() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [subtotal, setSubtotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -18,11 +18,17 @@ function Checkout() {
 
   useEffect(() => {
     // Fetch the stored cart and discount
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const storedDiscount = JSON.parse(localStorage.getItem("discount")) || 0;
+    const storedCartString = localStorage.getItem("cart");
+    const storedDiscountString = localStorage.getItem("discount");
+
+    // Check if storedCartString and storedDiscountString are not null
+    const storedCart = storedCartString ? JSON.parse(storedCartString) : [];
+    const storedDiscount = storedDiscountString
+      ? JSON.parse(storedDiscountString)
+      : 0;
 
     // Calculate subtotal
-    const calculatedSubtotal = storedCart.reduce((acc, item) => {
+    const calculatedSubtotal = storedCart.reduce((acc: number, item: any) => {
       const price =
         parseFloat(item.variants.edges[0]?.node?.price?.amount) || 0;
       const quantity = parseInt(item.quantity, 10) || 1; // Default quantity to 1 if not set
@@ -50,7 +56,7 @@ function Checkout() {
     setFormValid(isValid);
   }, [formData]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,

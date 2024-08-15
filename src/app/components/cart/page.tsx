@@ -1,194 +1,179 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import Home from "@/app/page";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
-function Checkout() {
-  const [cart, setCart] = useState<any[]>([]);
-  const [subtotal, setSubtotal] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [grandTotal, setGrandTotal] = useState(0);
-  const [formValid, setFormValid] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
-    postalCode: "",
-  });
+function Cart() {
+  const [cart, setCart] = useState([]);
+  const [coupon, setCoupon] = useState(""); // State to track coupon input
+  const [discount, setDiscount] = useState(0); // State to track discount percentage
+  const [couponApplied, setCouponApplied] = useState(false); // State to track if coupon is applied
 
   useEffect(() => {
-    // Fetch the stored cart and discount
-    const storedCartString = localStorage.getItem("cart");
-    const storedDiscountString = localStorage.getItem("discount");
-
-    // Check if storedCartString and storedDiscountString are not null
-    const storedCart = storedCartString ? JSON.parse(storedCartString) : [];
-    const storedDiscount = storedDiscountString
-      ? JSON.parse(storedDiscountString)
-      : 0;
-
-    // Calculate subtotal
-    const calculatedSubtotal = storedCart.reduce((acc: number, item: any) => {
-      const price =
-        parseFloat(item.variants.edges[0]?.node?.price?.amount) || 0;
-      const quantity = parseInt(item.quantity, 10) || 1; // Default quantity to 1 if not set
-      return acc + price * quantity;
-    }, 0);
-
-    // Calculate grand total
-    const discountAmount = calculatedSubtotal * (storedDiscount / 100);
-    const calculatedGrandTotal = calculatedSubtotal - discountAmount;
-
-    setCart(storedCart);
-    setSubtotal(calculatedSubtotal);
-    setDiscount(storedDiscount);
-    setGrandTotal(calculatedGrandTotal);
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const initializedCart = storedCart.map((item) => ({
+      ...item,
+      quantity: item.quantity || 1,
+    }));
+    setCart(initializedCart);
   }, []);
 
-  useEffect(() => {
-    // Check if all form fields are filled
-    const isValid =
-      formData.fullName &&
-      formData.email &&
-      formData.phone &&
-      formData.address &&
-      formData.postalCode;
-    setFormValid(isValid);
-  }, [formData]);
+  const updateCartInLocalStorage = (updatedCart) => {
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+  const removeFromCart = (indexToRemove) => {
+    const updatedCart = cart.filter((_, index) => index !== indexToRemove);
+    updateCartInLocalStorage(updatedCart);
+  };
+
+  const updateQuantity = (index, newQuantity) => {
+    const updatedCart = cart.map((item, i) => {
+      if (i === index) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    updateCartInLocalStorage(updatedCart);
+  };
+
+  const handleQuantityChange = (index, delta) => {
+    const newQuantity = cart[index].quantity + delta;
+    if (newQuantity > 0) {
+      updateQuantity(index, newQuantity);
+    }
+  };
+
+  const calculateTotalPrice = () => {
+    const subtotal = cart
+      .reduce((total, item) => {
+        const itemPrice = item.variants.edges[0].node.price.amount;
+        const itemQuantity = item.quantity || 1;
+        return total + itemPrice * itemQuantity;
+      }, 0)
+      .toFixed(2);
+
+    const total = (subtotal - subtotal * (discount / 100)).toFixed(2);
+    return total;
+  };
+
+  const applyCoupon = () => {
+    if (couponApplied) {
+      setDiscount(0);
+      setCoupon("");
+      setCouponApplied(false);
+      localStorage.setItem("discount", JSON.stringify(0)); // Reset discount in localStorage
+    } else if (coupon === "OFF20") {
+      setDiscount(20);
+      setCouponApplied(true);
+      localStorage.setItem("discount", JSON.stringify(20)); // Store discount in localStorage
+    } else {
+      alert("Invalid coupon code");
+      setDiscount(0);
+      setCouponApplied(false);
+    }
   };
 
   return (
     <div className="w-[70%] mx-auto mt-10">
-      <div className="flex gap-3">
-        <h2 className="text-2xl bg-black text-white px-4 py-1 rounded-xl font-bold mb-6">
-          Checkout
+      <div className="text-2xl font-bold mb-6 flex">
+        <h2 className=" bg-black px-3 py-1 rounded-xl text-white ">
+          Your Cart
         </h2>
-        <Link
-          className="text-2xl font-bold mb-6 px-4 py-1"
-          href="/components/cart"
-        >
-          Cart
+        <Link className="px-3 py-1 " href="/">
+          Home
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 border-2 mb-2 p-5 rounded-lg">
-        {/* Shipping Address Form */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Shipping Address</h3>
-          <form>
-            <div className="mb-4">
-              <label className="block">Full name *</label>
-              <input
-                className="w-full mb-2 border-2 p-2 rounded-lg"
-                type="text"
-                name="fullName"
-                placeholder="Enter your full name"
-                required
-                value={formData.fullName}
-                onChange={handleInputChange}
-              />
-              <label className="block">Email *</label>
-              <input
-                className="w-full border-2 mb-2 p-2 rounded-lg"
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-              <label className="block">Phone Number *</label>
-              <input
-                className="w-full border-2 mb-2 p-2 rounded-lg"
-                type="tel"
-                name="phone"
-                placeholder="Number only"
-                required
-                value={formData.phone}
-                onChange={handleInputChange}
-              />
-              <label className="block">Address *</label>
-              <input
-                className="w-full border-2 p-2 mb-2 rounded-lg"
-                type="text"
-                name="address"
-                placeholder="Address"
-                required
-                value={formData.address}
-                onChange={handleInputChange}
-              />
-              <label className="block">Postal Code *</label>
-              <input
-                className="w-full border-2 mb-2 p-2 rounded-lg"
-                type="text"
-                name="postalCode"
-                placeholder="Postal Code"
-                required
-                value={formData.postalCode}
-                onChange={handleInputChange}
-              />
-            </div>
-          </form>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Your Order</h3>
-          <div className="p-4 border rounded-lg">
-            {cart.map((item, index) => (
-              <div key={index} className="flex justify-between mb-4">
-                <div>
-                  <h4>{item.title}</h4>
-                  <p>Quantity: {item.quantity}</p>
-                </div>
-                <p>
-                  $
-                  {(
-                    (parseFloat(item.variants.edges[0].node.price.amount) ||
-                      0) * (parseInt(item.quantity, 10) || 1)
-                  ) // Default quantity to 1 if not set
-                    .toFixed(2)}
-                </p>
-              </div>
-            ))}
-            <hr />
-            <div className="flex justify-between mt-4">
-              <p>Subtotal</p>
-              <p>${subtotal.toFixed(2)}</p>
-            </div>
-            <div className="flex justify-between">
-              <p>Discount</p>
-              <p>- ${(subtotal * (discount / 100)).toFixed(2)}</p>
-            </div>
-            <div className="flex justify-between mt-4">
-              <p>Grand total</p>
-              <p>${grandTotal.toFixed(2)}</p>
-            </div>
-          </div>
-          {formValid ? (
-            <Link href="/components/Payments">
-              <button className="bg-black text-white px-6 py-3 mt-6 rounded-lg w-full">
-                Continue to payment
-              </button>
-            </Link>
-          ) : (
-            <button
-              className="bg-gray-400 text-white px-6 py-3 mt-6 rounded-lg w-full"
-              disabled
+      <div className="grid grid-cols-1 gap-4">
+        {cart.length === 0 ? (
+          <div className="text-center mt-10">Your cart is empty</div>
+        ) : (
+          cart.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-4 border rounded-lg"
             >
-              Fill out form to continue
-            </button>
-          )}
+              <div className="flex items-center">
+                {item.featuredImage && (
+                  <img
+                    src={item.featuredImage.url}
+                    alt={item.title}
+                    className="w-16 h-16 rounded-lg mr-4"
+                  />
+                )}
+                <div>
+                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <p className="text-gray-500">
+                    ${item.variants.edges[0].node.price.amount}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <button
+                  onClick={() => handleQuantityChange(index, -1)}
+                  className="px-2 py-1 bg-gray-300 rounded-lg"
+                >
+                  -
+                </button>
+                <span className="mx-2">{item.quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(index, 1)}
+                  className="px-2 py-1 bg-gray-300 rounded-lg"
+                >
+                  +
+                </button>
+              </div>
+              <button
+                onClick={() => removeFromCart(index)}
+                className="bg-red-600 text-white px-3 py-2 rounded-lg ml-4"
+              >
+                Remove
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="mt-4 p-4 border rounded-lg ">
+        <h3 className="text-lg font-semibold">Coupon Discount</h3>
+        <div className="flex items-center">
+          <input
+            className="border-2 border-gray-500 rounded-lg p-1"
+            type="text"
+            placeholder="Enter coupon code"
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value)}
+            disabled={couponApplied} // Disable input when coupon is applied
+          />
+          <button
+            onClick={applyCoupon}
+            className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-2 rounded-lg"
+          >
+            {couponApplied ? "Remove Coupon" : "Apply"}
+          </button>
         </div>
+        {couponApplied ? (
+          <p className="text-green-600">
+            {discount}% off on Subtotal - Coupon applied successfully!
+          </p>
+        ) : (
+          <p>20% off use "OFF20"</p>
+        )}
+      </div>
+      <div className="mt-6 text-right">
+        <h3 className="text-xl font-semibold mb-3">
+          Total: ${calculateTotalPrice()}
+        </h3>
+        <Link
+          className="bg-black text-white px-3 py-2 px-7 rounded-lg"
+          href="/components/Checkout"
+        >
+          Checkout
+        </Link>
       </div>
     </div>
   );
 }
 
-export default Checkout;
+export default Cart;
