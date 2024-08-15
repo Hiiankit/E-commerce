@@ -1,16 +1,34 @@
 "use client";
-import Home from "@/app/page";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
+interface CartItem {
+  title: string;
+  quantity: number;
+  featuredImage?: {
+    url: string;
+  };
+  variants: {
+    edges: Array<{
+      node: {
+        price: {
+          amount: number;
+        };
+      };
+    }>;
+  };
+}
+
 function Cart() {
-  const [cart, setCart] = useState([]);
-  const [coupon, setCoupon] = useState(""); // State to track coupon input
-  const [discount, setDiscount] = useState(0); // State to track discount percentage
-  const [couponApplied, setCouponApplied] = useState(false); // State to track if coupon is applied
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [coupon, setCoupon] = useState<string>(""); // State to track coupon input
+  const [discount, setDiscount] = useState<number>(0); // State to track discount percentage
+  const [couponApplied, setCouponApplied] = useState<boolean>(false); // State to track if coupon is applied
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedCart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    ) as CartItem[];
     const initializedCart = storedCart.map((item) => ({
       ...item,
       quantity: item.quantity || 1,
@@ -18,17 +36,17 @@ function Cart() {
     setCart(initializedCart);
   }, []);
 
-  const updateCartInLocalStorage = (updatedCart) => {
+  const updateCartInLocalStorage = (updatedCart: CartItem[]) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const removeFromCart = (indexToRemove) => {
+  const removeFromCart = (indexToRemove: number) => {
     const updatedCart = cart.filter((_, index) => index !== indexToRemove);
     updateCartInLocalStorage(updatedCart);
   };
 
-  const updateQuantity = (index, newQuantity) => {
+  const updateQuantity = (index: number, newQuantity: number) => {
     const updatedCart = cart.map((item, i) => {
       if (i === index) {
         return { ...item, quantity: newQuantity };
@@ -38,7 +56,7 @@ function Cart() {
     updateCartInLocalStorage(updatedCart);
   };
 
-  const handleQuantityChange = (index, delta) => {
+  const handleQuantityChange = (index: number, delta: number) => {
     const newQuantity = cart[index].quantity + delta;
     if (newQuantity > 0) {
       updateQuantity(index, newQuantity);
@@ -54,7 +72,10 @@ function Cart() {
       }, 0)
       .toFixed(2);
 
-    const total = (subtotal - subtotal * (discount / 100)).toFixed(2);
+    const total = (
+      parseFloat(subtotal) -
+      parseFloat(subtotal) * (discount / 100)
+    ).toFixed(2);
     return total;
   };
 
@@ -78,10 +99,8 @@ function Cart() {
   return (
     <div className="w-[70%] mx-auto mt-10">
       <div className="text-2xl font-bold mb-6 flex">
-        <h2 className=" bg-black px-3 py-1 rounded-xl text-white ">
-          Your Cart
-        </h2>
-        <Link className="px-3 py-1 " href="/">
+        <h2 className="bg-black px-3 py-1 rounded-xl text-white">Your Cart</h2>
+        <Link className="px-3 py-1" href="/">
           Home
         </Link>
       </div>
@@ -135,7 +154,7 @@ function Cart() {
           ))
         )}
       </div>
-      <div className="mt-4 p-4 border rounded-lg ">
+      <div className="mt-4 p-4 border rounded-lg">
         <h3 className="text-lg font-semibold">Coupon Discount</h3>
         <div className="flex items-center">
           <input
