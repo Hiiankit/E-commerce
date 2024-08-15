@@ -3,36 +3,72 @@ import { useEffect, useState } from "react";
 import Header from "../Header/page";
 import Image from "next/image";
 
+// Define the types for product and variant
+interface ProductVariant {
+  price: {
+    amount: number;
+  };
+}
+
+interface ProductNode {
+  id: string;
+  title: string;
+  description: string;
+  featuredImage?: {
+    url: string;
+  };
+  variants: {
+    edges: Array<{
+      node: ProductVariant;
+    }>;
+  };
+}
+
+interface ProductResponse {
+  data: {
+    products: {
+      edges: Array<{
+        node: ProductNode;
+      }>;
+    };
+  };
+}
+
 export default function Product() {
-  const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [products, setProducts] = useState<ProductNode[]>([]);
+  const [cart, setCart] = useState<ProductNode[]>([]);
 
   useEffect(() => {
     fetch(
       "https://mock.shop/api?query={products(first:20){edges{node{id title description featuredImage{id url} variants(first:3){edges{node{price{amount currencyCode}}}}}}}}"
     )
       .then((res) => res.json())
-      .then((data) => setProducts(data.data.products.edges))
+      .then((data: ProductResponse) =>
+        setProducts(data.data.products.edges.map((edge) => edge.node))
+      )
       .catch((error) => console.error("Error fetching products:", error));
 
     // Load cart from localStorage
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
   }, []);
 
-  const addToCart = (product) => {
+  const addToCart = (product: ProductNode) => {
     const updatedCart = [...cart, product];
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  if (!products.length) return <div>Loading...</div>;
+  // Calculate the number of items in the cart
+  const cartItems = cart.length;
+
+  if (products.length === 0) return <div>Loading...</div>;
 
   return (
     <>
-      <Header cartItems={cart.length} />
-      <div className="grid font-serif grid-cols-1 sm:gap-2 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto ">
-        {products.map(({ node: product }) => (
+      <Header cartItems={cartItems} />
+      <div className="grid font-serif grid-cols-1 sm:gap-2 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto">
+        {products.map((product) => (
           <div key={product.id}>
             {product.featuredImage && (
               <Image
