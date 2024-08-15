@@ -18,13 +18,11 @@ function Checkout() {
 
   useEffect(() => {
     // Fetch the stored cart and discount
-    const storedCart = localStorage.getItem("cart");
-    const parsedCart = storedCart ? JSON.parse(storedCart) : [];
-    const storedDiscount = localStorage.getItem("discount");
-    const parsedDiscount = storedDiscount ? JSON.parse(storedDiscount) : 0;
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedDiscount = JSON.parse(localStorage.getItem("discount")) || 0;
 
     // Calculate subtotal
-    const calculatedSubtotal = parsedCart.reduce((acc, item) => {
+    const calculatedSubtotal = storedCart.reduce((acc, item) => {
       const price =
         parseFloat(item.variants.edges[0]?.node?.price?.amount) || 0;
       const quantity = parseInt(item.quantity, 10) || 1; // Default quantity to 1 if not set
@@ -32,12 +30,12 @@ function Checkout() {
     }, 0);
 
     // Calculate grand total
-    const discountAmount = calculatedSubtotal * (parsedDiscount / 100);
+    const discountAmount = calculatedSubtotal * (storedDiscount / 100);
     const calculatedGrandTotal = calculatedSubtotal - discountAmount;
 
-    setCart(parsedCart);
+    setCart(storedCart);
     setSubtotal(calculatedSubtotal);
-    setDiscount(parsedDiscount);
+    setDiscount(storedDiscount);
     setGrandTotal(calculatedGrandTotal);
   }, []);
 
