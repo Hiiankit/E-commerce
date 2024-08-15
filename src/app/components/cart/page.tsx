@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -116,7 +117,9 @@ function Cart() {
             >
               <div className="flex items-center">
                 {item.featuredImage && (
-                  <img
+                  <Image
+                    height={200}
+                    width={200}
                     src={item.featuredImage.url}
                     alt={item.title}
                     className="w-16 h-16 rounded-lg mr-4"
@@ -177,7 +180,7 @@ function Cart() {
             {discount}% off on Subtotal - Coupon applied successfully!
           </p>
         ) : (
-          <p>20% off use "OFF20"</p>
+          <p>20% off use OFF20</p>
         )}
       </div>
       <div className="mt-6 text-right">

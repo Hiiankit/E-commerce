@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Header from "../Header/page";
+import Image from "next/image";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -34,11 +35,12 @@ export default function Product() {
         {products.map(({ node: product }) => (
           <div key={product.id}>
             {product.featuredImage && (
-              <img
+              <Image
                 className="rounded-xl"
                 src={product.featuredImage.url}
                 alt={product.title}
                 width={300}
+                height={200}
               />
             )}
             <h1 className="text-xl font-bold">{product.title}</h1>
