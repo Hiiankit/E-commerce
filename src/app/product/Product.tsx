@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Header from "../Header/page";
+import Header from "../header/Header";
 import Image from "next/image";
 
 // Define the types for product and variant

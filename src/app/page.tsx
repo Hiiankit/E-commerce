@@ -1,4 +1,4 @@
-import Product from "./components/product/page";
+import Product from "./product/Product";
 export default function Home() {
   return (
     <main>
