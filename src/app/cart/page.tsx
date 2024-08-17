@@ -116,7 +116,7 @@ const Cart = () => {
           cart.map((item, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-4 border rounded-lg"
+              className="flex flex-col md:flex-row  items-center justify-between p-4 border rounded-lg"
             >
               <div className="flex items-center">
                 {item.featuredImage && (
@@ -125,7 +125,7 @@ const Cart = () => {
                     width={200}
                     src={item.featuredImage.url}
                     alt={item.title}
-                    className="w-16 h-16 rounded-lg mr-4"
+                    className="w-16 h-16 rounded-lg mb-2 mr-4"
                   />
                 )}
                 <div>
@@ -135,7 +135,7 @@ const Cart = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center mb-2">
                 <button
                   onClick={() => handleQuantityChange(index, -1)}
                   className="px-2 py-1 bg-gray-300 rounded-lg"
@@ -152,7 +152,7 @@ const Cart = () => {
               </div>
               <button
                 onClick={() => removeFromCart(index)}
-                className="bg-red-600 text-white px-3 py-2 rounded-lg ml-4"
+                className="bg-red-600 text-white px-3 py-2 rounded-lg ml-0 md:ml-4 w-full md:w-auto"
               >
                 Remove
               </button>
@@ -162,9 +162,9 @@ const Cart = () => {
       </div>
       <div className="mt-4 p-4 border rounded-lg">
         <h3 className="text-lg font-semibold">Coupon Discount</h3>
-        <div className="flex items-center">
+        <div className="flex flex-col md:flex-row items-center">
           <input
-            className="border-2 border-gray-500 rounded-lg p-1"
+            className="border-2 border-gray-500 rounded-lg p-1 w-full md:w-auto mb-4 md:mb-0"
             type="text"
             placeholder="Enter coupon code"
             value={coupon}
@@ -173,17 +173,17 @@ const Cart = () => {
           />
           <button
             onClick={applyCoupon}
-            className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-2 rounded-lg"
+            className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-0 md:ml-2 w-full md:w-auto rounded-lg"
           >
             {couponApplied ? "Remove Coupon" : "Apply"}
           </button>
         </div>
         {couponApplied ? (
-          <p className="text-green-600">
+          <p className="text-green-600 mt-2">
             {discount}% off on Subtotal - Coupon applied successfully!
           </p>
         ) : (
-          <p>20% off use OFF20</p>
+          <p className="mt-2">20% off use OFF20</p>
         )}
       </div>
       <div className="mt-6 text-right">
