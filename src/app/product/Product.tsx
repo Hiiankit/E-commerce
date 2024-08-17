@@ -37,6 +37,8 @@ interface ProductResponse {
 export default function Product() {
   const [products, setProducts] = useState<ProductNode[]>([]);
   const [cart, setCart] = useState<ProductNode[]>([]);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
 
   useEffect(() => {
     fetch(
@@ -57,6 +59,15 @@ export default function Product() {
     const updatedCart = [...cart, product];
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    // Show notification
+    setNotificationMessage(`${product.title} added to cart!`);
+    setShowNotification(true);
+
+    // Hide notification after 2 seconds
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
   };
 
   // Calculate the number of items in the cart
@@ -64,18 +75,25 @@ export default function Product() {
 
   if (products.length === 0)
     return (
-      <div className="h-8 w-8 absolute border-[4px] rounded-full border-white border-r-yellow-400 animate-spin top-[50%] left-[50%] "></div>
+      <div className="h-8 w-8 absolute border-[4px] rounded-full border-white border-r-yellow-400 animate-spin top-[50%] left-[50%]"></div>
     );
 
   return (
     <>
       <Header cartItems={cartItems} />
-      <div className="grid  font-serif grid-cols-1  sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4 ">
+
+      {showNotification && (
+        <div className="fixed top-4 right-4 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-xl shadow-lg transition-opacity duration-300 ease-in-out">
+          {notificationMessage}
+        </div>
+      )}
+
+      <div className="grid font-serif grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4">
         {products.map((product) => (
           <div key={product.id}>
             {product.featuredImage && (
               <Image
-                className="rounded-xl "
+                className="rounded-xl"
                 src={product.featuredImage.url}
                 alt={product.title}
                 width={300}
