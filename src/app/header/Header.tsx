@@ -16,7 +16,7 @@ const Header: NextPage<HeaderProps> = ({ cartItems }) => {
         <Link className="text-xl sm:text-2xl flex items-center" href="./cart">
           <FaCartShopping />
           {cartItems > 0 && (
-            <span className="ml-1 sm:ml-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
+            <span className="ml-1 sm:ml-2 bg-black text-white h-6 w-6 flex items-center  justify-center rounded-full text-xs sm:text-sm">
               {cartItems}
             </span>
           )}

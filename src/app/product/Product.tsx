@@ -83,7 +83,7 @@ export default function Product() {
       <Header cartItems={cartItems} />
 
       {showNotification && (
-        <div className="fixed top-4 right-4 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-xl shadow-lg transition-opacity duration-300 ease-in-out">
+        <div className="fixed top-4 right-0 transform -translate-x-1/2 md:left-auto md:right-4 md:translate-x-0 bg-slate-500 text-white px-1 py-2 rounded-xl shadow-lg transition-opacity duration-300 ease-in-out w-[90%] max-w-fit">
           {notificationMessage}
         </div>
       )}
