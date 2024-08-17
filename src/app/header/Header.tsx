@@ -13,10 +13,6 @@ const Header: NextPage<HeaderProps> = ({ cartItems }) => {
       <h1 className="font-serif font-semibold text-xl sm:text-3xl">Products</h1>
 
       <div className="flex items-center gap-x-4 sm:gap-x-6">
-        <button className="px-3 sm:px-4 bg-black text-white rounded-lg text-sm sm:text-base">
-          Login
-        </button>
-
         <Link className="text-xl sm:text-2xl flex items-center" href="./cart">
           <FaCartShopping />
           {cartItems > 0 && (
