@@ -41,11 +41,14 @@ const Payment: React.FC = () => {
                 type="radio"
                 name="paymentMethod"
                 value="creditCard"
+                id="creditCard"
                 checked={paymentMethod === "creditCard"}
                 onChange={() => handlePaymentMethodChange("creditCard")}
                 className="mr-2"
               />
-              <span className="text-lg">Visa, MasterCard</span>
+              <label htmlFor="creditCard" className="text-lg">
+                Visa, MasterCard
+              </label>
               {paymentMethod === "creditCard" && (
                 <div className="mt-4 space-y-4">
                   <input
@@ -74,30 +77,34 @@ const Payment: React.FC = () => {
               )}
             </div>
 
-            <div className="mb-4">
-              <label className="block mb-2 font-semibold">GPay</label>
+            <div className="mb-4 flex items-center content-center">
               <input
                 type="radio"
                 name="paymentMethod"
-                value="paypal"
-                checked={paymentMethod === "paypal"}
-                onChange={() => handlePaymentMethodChange("paypal")}
+                value="GPay"
+                id="GPay"
+                checked={paymentMethod === "GPay"}
+                onChange={() => handlePaymentMethodChange("GPay")}
                 className="mr-2"
               />
+              <label htmlFor="GPay" className="block font-semibold">
+                GPay
+              </label>
             </div>
 
-            <div className="mb-4">
-              <label className="block mb-2 font-semibold">
-                Cash On Delivery
-              </label>
+            <div className="mb-4 flex items-center content-center">
               <input
                 type="radio"
                 name="paymentMethod"
-                value="neteller"
-                checked={paymentMethod === "neteller"}
-                onChange={() => handlePaymentMethodChange("neteller")}
+                value="Cash On Delivery"
+                id="cashOnDelivery"
+                checked={paymentMethod === "Cash On Delivery"}
+                onChange={() => handlePaymentMethodChange("Cash On Delivery")}
                 className="mr-2"
               />
+              <label htmlFor="cashOnDelivery" className="block font-semibold">
+                Cash On Delivery
+              </label>
             </div>
 
             <button className="bg-black text-white px-6 py-3 mt-6 rounded-lg w-full">
