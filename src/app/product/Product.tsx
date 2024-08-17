@@ -88,7 +88,7 @@ export default function Product() {
         </div>
       )}
 
-      <div className="grid font-serif grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4">
+      <div className="grid font-serif grid-cols-2 space-x-2 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4">
         {products.map((product) => (
           <div key={product.id}>
             {product.featuredImage && (

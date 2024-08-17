@@ -147,7 +147,7 @@ const Cart = () => {
                     </p>
                   </div>
                 </div>
-                <div className="py-1 border border-gray-300 rounded-lg mb-2 bg-white flex items-center justify-center">
+                <div className="py-1 border border-gray-300 rounded-lg mb-2 bg-white  flex items-center justify-center">
                   <button
                     onClick={() => handleQuantityChange(index, -1)}
                     className="px-3 py-1 flex items-center justify-center"
