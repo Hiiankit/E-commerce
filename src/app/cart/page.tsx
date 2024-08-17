@@ -27,6 +27,7 @@ const Cart = () => {
   const [coupon, setCoupon] = useState<string>(""); // State to track coupon input
   const [discount, setDiscount] = useState<number>(0); // State to track discount percentage
   const [couponApplied, setCouponApplied] = useState<boolean>(false); // State to track if coupon is applied
+  const [isCouponInvalid, setIsCouponInvalid] = useState<boolean>(false);
 
   useEffect(() => {
     // Load cart from localStorage and initialize state
@@ -94,10 +95,17 @@ const Cart = () => {
       setCouponApplied(true);
       localStorage.setItem("discount", JSON.stringify(20)); // Store discount in localStorage
     } else {
-      alert("Invalid coupon code");
+      setIsCouponInvalid(true);
       setDiscount(0);
       setCouponApplied(false);
     }
+  };
+  const removeCoupon = () => {
+    setDiscount(0);
+    setCoupon("");
+    setCouponApplied(false);
+    setIsCouponInvalid(false);
+    localStorage.setItem("discount", JSON.stringify(0));
   };
 
   return (
@@ -174,20 +182,27 @@ const Cart = () => {
             disabled={couponApplied} // Disable input when coupon is applied
           />
           <button
-            onClick={applyCoupon}
+            onClick={
+              couponApplied || isCouponInvalid ? removeCoupon : applyCoupon
+            }
             className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-0 md:ml-2 w-full md:w-auto rounded-lg"
           >
-            {couponApplied ? "Remove Coupon" : "Apply"}
+            {couponApplied || isCouponInvalid ? "Remove Coupon" : "Apply"}
           </button>
         </div>
-        {couponApplied ? (
+        {isCouponInvalid && (
+          <p className="text-red-600 mt-2">Invalid coupon code.</p>
+        )}
+        {couponApplied && !isCouponInvalid && (
           <p className="text-green-600 mt-2">
             {discount}% off on Subtotal - Coupon applied successfully!
           </p>
-        ) : (
+        )}
+        {!couponApplied && !isCouponInvalid && (
           <p className="mt-2">20% off use OFF20</p>
         )}
       </div>
+
       <div className="mt-6 text-right">
         <h3 className="text-xl font-semibold mb-3">
           Total: ${calculateTotalPrice()}
