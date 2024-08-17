@@ -88,9 +88,12 @@ export default function Product() {
         </div>
       )}
 
-      <div className="grid font-serif grid-cols-2 space-x-2 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-4 sm:px-6 md:px-8 lg:px-12 mx-auto">
         {products.map((product) => (
-          <div key={product.id}>
+          <div
+            key={product.id}
+            className="bg-white rounded-lg shadow-lg  p-4 flex flex-col justify-between items-center h-full"
+          >
             {product.featuredImage && (
               <Image
                 className="rounded-xl"
@@ -98,19 +101,20 @@ export default function Product() {
                 alt={product.title}
                 width={300}
                 height={200}
+                objectFit="cover"
               />
             )}
-            <h1 className="text-xl font-bold">{product.title}</h1>
-            <div>
+            <div className="flex flex-col items-start mt-4">
+              <h1 className="text-xl font-bold">{product.title}</h1>
               {product.variants.edges.length > 0 && (
-                <p className="text-lg">
+                <p className="text-lg mt-2">
                   Price: ${product.variants.edges[0].node.price.amount}
                 </p>
               )}
             </div>
             <button
               onClick={() => addToCart(product)}
-              className="bg-black text-white px-3 py-2 rounded-xl mb-4"
+              className="bg-black text-white px-3 py-2 rounded-xl mt-4 w-full"
             >
               Add to Cart
             </button>
