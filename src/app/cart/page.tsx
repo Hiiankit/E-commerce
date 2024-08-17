@@ -116,7 +116,7 @@ const Cart = () => {
           cart.map((item, index) => (
             <div
               key={index}
-              className="flex flex-col md:flex-row  items-center justify-between p-4 border rounded-lg"
+              className="flex flex-col md:flex-row items-center justify-between p-4 border rounded-lg"
             >
               <div className="flex items-center">
                 {item.featuredImage && (
@@ -135,17 +135,19 @@ const Cart = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center mb-2">
+              <div className=" py-1 border border-gray-300 rounded-lg bg-white flex items-center justify-center">
                 <button
                   onClick={() => handleQuantityChange(index, -1)}
-                  className="px-2 py-1 bg-gray-300 rounded-lg"
+                  className="px-3 py-1 flex items-center justify-center"
                 >
                   -
                 </button>
-                <span className="mx-2">{item.quantity}</span>
+                <span className="mx-2 text-lg font-medium">
+                  {item.quantity}
+                </span>
                 <button
                   onClick={() => handleQuantityChange(index, 1)}
-                  className="px-2 py-1 bg-gray-300 rounded-lg"
+                  className="px-3 py-1 flex items-center justify-center"
                 >
                   +
                 </button>
