@@ -89,10 +89,12 @@ const Cart = () => {
       setDiscount(0);
       setCoupon("");
       setCouponApplied(false);
+      setIsCouponInvalid(false);
       localStorage.setItem("discount", JSON.stringify(0)); // Reset discount in localStorage
     } else if (coupon === "OFF20") {
       setDiscount(20);
       setCouponApplied(true);
+      setIsCouponInvalid(false);
       localStorage.setItem("discount", JSON.stringify(20)); // Store discount in localStorage
     } else {
       setIsCouponInvalid(true);
@@ -100,6 +102,7 @@ const Cart = () => {
       setCouponApplied(false);
     }
   };
+
   const removeCoupon = () => {
     setDiscount(0);
     setCoupon("");
@@ -117,103 +120,106 @@ const Cart = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        {cart.length === 0 ? (
-          <div className="text-center mt-10">Your cart is empty</div>
-        ) : (
-          cart.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col md:flex-row items-center justify-between p-4 border rounded-lg"
-            >
-              <div className="flex items-center">
-                {item.featuredImage && (
-                  <Image
-                    height={200}
-                    width={200}
-                    src={item.featuredImage.url}
-                    alt={item.title}
-                    className="w-16 h-16 rounded-lg mb-2 mr-4"
-                  />
-                )}
-                <div>
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="text-gray-500">
-                    ${item.variants.edges[0].node.price.amount}
-                  </p>
-                </div>
-              </div>
-              <div className=" py-1 border border-gray-300 rounded-lg mb-2 bg-white flex items-center justify-center">
-                <button
-                  onClick={() => handleQuantityChange(index, -1)}
-                  className="px-3 py-1 flex items-center justify-center"
-                >
-                  -
-                </button>
-                <span className="mx-2 text-lg font-medium">
-                  {item.quantity}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange(index, 1)}
-                  className="px-3 py-1 flex items-center justify-center"
-                >
-                  +
-                </button>
-              </div>
-              <button
-                onClick={() => removeFromCart(index)}
-                className="bg-red-600 text-white px-3 py-2 rounded-lg ml-0 md:ml-4 w-full md:w-auto"
+      {cart.length === 0 ? (
+        <div className="text-center mt-10">Your cart is empty</div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 gap-4">
+            {cart.map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-col md:flex-row items-center justify-between p-4 border rounded-lg"
               >
-                Remove
+                <div className="flex items-center">
+                  {item.featuredImage && (
+                    <Image
+                      height={200}
+                      width={200}
+                      src={item.featuredImage.url}
+                      alt={item.title}
+                      className="w-16 h-16 rounded-lg mb-2 mr-4"
+                    />
+                  )}
+                  <div>
+                    <h3 className="text-lg font-semibold">{item.title}</h3>
+                    <p className="text-gray-500">
+                      ${item.variants.edges[0].node.price.amount}
+                    </p>
+                  </div>
+                </div>
+                <div className="py-1 border border-gray-300 rounded-lg mb-2 bg-white flex items-center justify-center">
+                  <button
+                    onClick={() => handleQuantityChange(index, -1)}
+                    className="px-3 py-1 flex items-center justify-center"
+                  >
+                    -
+                  </button>
+                  <span className="mx-2 text-lg font-medium">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => handleQuantityChange(index, 1)}
+                    className="px-3 py-1 flex items-center justify-center"
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={() => removeFromCart(index)}
+                  className="bg-red-600 text-white px-3 py-2 rounded-lg ml-0 md:ml-4 w-full md:w-auto"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 p-4 border rounded-lg">
+            <h3 className="text-lg font-semibold">Coupon Discount</h3>
+            <div className="flex flex-col md:flex-row items-center">
+              <input
+                className="border-2 border-gray-500 rounded-lg p-1 w-full md:w-auto mb-4 md:mb-0"
+                type="text"
+                placeholder="Enter coupon code"
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+                disabled={couponApplied} // Disable input when coupon is applied
+              />
+              <button
+                onClick={
+                  couponApplied || isCouponInvalid ? removeCoupon : applyCoupon
+                }
+                className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-0 md:ml-2 w-full md:w-auto rounded-lg"
+              >
+                {couponApplied || isCouponInvalid ? "Remove Coupon" : "Apply"}
               </button>
             </div>
-          ))
-        )}
-      </div>
-      <div className="mt-4 p-4 border rounded-lg">
-        <h3 className="text-lg font-semibold">Coupon Discount</h3>
-        <div className="flex flex-col md:flex-row items-center">
-          <input
-            className="border-2 border-gray-500 rounded-lg p-1 w-full md:w-auto mb-4 md:mb-0"
-            type="text"
-            placeholder="Enter coupon code"
-            value={coupon}
-            onChange={(e) => setCoupon(e.target.value)}
-            disabled={couponApplied} // Disable input when coupon is applied
-          />
-          <button
-            onClick={
-              couponApplied || isCouponInvalid ? removeCoupon : applyCoupon
-            }
-            className="bg-zinc-300 text-zinc-800 px-3 py-1 ml-0 md:ml-2 w-full md:w-auto rounded-lg"
-          >
-            {couponApplied || isCouponInvalid ? "Remove Coupon" : "Apply"}
-          </button>
-        </div>
-        {isCouponInvalid && (
-          <p className="text-red-600 mt-2">Invalid coupon code.</p>
-        )}
-        {couponApplied && !isCouponInvalid && (
-          <p className="text-green-600 mt-2">
-            {discount}% off on Subtotal - Coupon applied successfully!
-          </p>
-        )}
-        {!couponApplied && !isCouponInvalid && (
-          <p className="mt-2">20% off use OFF20</p>
-        )}
-      </div>
+            {isCouponInvalid && (
+              <p className="text-red-600 mt-2">Invalid coupon code.</p>
+            )}
+            {couponApplied && !isCouponInvalid && (
+              <p className="text-green-600 mt-2">
+                {discount}% off on Subtotal - Coupon applied successfully!
+              </p>
+            )}
+            {!couponApplied && !isCouponInvalid && (
+              <p className="mt-2">20% off use OFF20</p>
+            )}
+          </div>
 
-      <div className="mt-6 text-right">
-        <h3 className="text-xl font-semibold mb-3">
-          Total: ${calculateTotalPrice()}
-        </h3>
-        <Link
-          className="bg-black text-white px-3 py-2 px-7 rounded-lg"
-          href="./checkout"
-        >
-          Checkout
-        </Link>
-      </div>
+          <div className="mt-6 text-right">
+            <h3 className="text-xl font-semibold mb-3">
+              Total: ${calculateTotalPrice()}
+            </h3>
+            <Link
+              className="bg-black text-white px-3 py-2 px-7 rounded-lg"
+              href="./checkout"
+            >
+              Checkout
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 };
