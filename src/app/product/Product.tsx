@@ -67,12 +67,12 @@ export default function Product() {
   return (
     <>
       <Header cartItems={cartItems} />
-      <div className="grid font-serif grid-cols-1 sm:gap-2 sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto">
+      <div className="grid  font-serif grid-cols-2  sm:grid-cols-2 md:grid-cols-3 w-[70%] mx-auto sm:gap-4 ">
         {products.map((product) => (
           <div key={product.id}>
             {product.featuredImage && (
               <Image
-                className="rounded-xl"
+                className="rounded-xl "
                 src={product.featuredImage.url}
                 alt={product.title}
                 width={300}
