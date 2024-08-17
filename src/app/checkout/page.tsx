@@ -91,20 +91,20 @@ const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="w-[70%] mx-auto mt-10">
+    <div className="w-[90%] md:w-[70%] mx-auto mt-10">
       <div className="flex gap-3">
-        <h2 className="text-2xl bg-black text-white px-4 py-1 rounded-xl font-bold mb-6">
+        <h2 className="text-xl md:text-2xl bg-black text-white px-4 py-1 rounded-xl font-bold mb-6">
           Checkout
         </h2>
         <Link
-          className="text-2xl font-bold mb-6 px-4 py-1"
-          href="/components/cart"
+          className="text-xl md:text-2xl font-bold mb-6 px-4 py-1"
+          href="/cart"
         >
           Cart
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 border-2 mb-2 p-5 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-2 mb-2 p-5 rounded-lg">
         {/* Shipping Address Form */}
         <div>
           <h3 className="text-lg font-semibold mb-4">Shipping Address</h3>
