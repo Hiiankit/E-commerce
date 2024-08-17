@@ -62,7 +62,10 @@ export default function Product() {
   // Calculate the number of items in the cart
   const cartItems = cart.length;
 
-  if (products.length === 0) return <div>Loading...</div>;
+  if (products.length === 0)
+    return (
+      <div className="h-8 w-8 absolute border-[4px] rounded-full border-white border-r-yellow-400 animate-spin top-[50%] left-[50%] "></div>
+    );
 
   return (
     <>
